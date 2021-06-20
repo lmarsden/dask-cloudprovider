@@ -738,6 +738,11 @@ class ECSCluster(SpecCluster):
             retries={"total_max_attempts": 16, "mode": "adaptive"},
         )
 
+        # The AioConfig constructor automatically adds a default
+        # keepalive_timeout value. This must be removed for HTTP
+        # keepalive to be turned off.
+        del aio_config.connector_args["keepalive_timeout"]
+
         return self.session.create_client(
             name,
             aws_access_key_id=self._aws_access_key_id,
