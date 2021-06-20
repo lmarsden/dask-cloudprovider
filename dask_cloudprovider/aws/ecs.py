@@ -733,11 +733,17 @@ class ECSCluster(SpecCluster):
         super().__init__(**kwargs)
 
     def _client(self, name: str):
+        aio_config = aiobotocore.config.AioConfig(
+            connector_args={"force_close": True},
+            retries={"total_max_attempts": 16, "mode": "adaptive"},
+        )
+
         return self.session.create_client(
             name,
             aws_access_key_id=self._aws_access_key_id,
             aws_secret_access_key=self._aws_secret_access_key,
             region_name=self._region_name,
+            config=aio_config,
         )
 
     async def _start(
