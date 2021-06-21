@@ -734,7 +734,7 @@ class ECSCluster(SpecCluster):
 
     def _client(self, name: str):
         aio_config = aiobotocore.config.AioConfig(
-            max_pool_connections=90,
+            max_pool_connections=32,
             retries={"total_max_attempts": 16, "mode": "adaptive"},
         )
 
