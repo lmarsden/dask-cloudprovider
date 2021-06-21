@@ -734,28 +734,17 @@ class ECSCluster(SpecCluster):
 
     def _client(self, name: str):
         aio_config = aiobotocore.config.AioConfig(
-            connector_args={"force_close": True},
+            max_pool_connections=90,
             retries={"total_max_attempts": 16, "mode": "adaptive"},
         )
 
-        # The AioConfig constructor automatically adds a default
-        # keepalive_timeout value. This must be set to None for
-        # HTTP keepalive to be turned off by aiohttp, but needs to not be
-        # present at all during the create_client() call else a validation
-        # error is raised ("keepalive_timeout" must be float or int)
-        del aio_config.connector_args["keepalive_timeout"]
-
-        aio_client = self.session.create_client(
+        return self.session.create_client(
             name,
             aws_access_key_id=self._aws_access_key_id,
             aws_secret_access_key=self._aws_secret_access_key,
             region_name=self._region_name,
             config=aio_config,
         )
-
-        aio_client._client_config.keepalive_timeout = None
-
-        return aio_client
 
     async def _start(
         self,
