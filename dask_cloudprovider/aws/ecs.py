@@ -739,9 +739,9 @@ class ECSCluster(SpecCluster):
         )
 
         # The AioConfig constructor automatically adds a default
-        # keepalive_timeout value. This must be removed for HTTP
-        # keepalive to be turned off.
-        del aio_config.connector_args["keepalive_timeout"]
+        # keepalive_timeout value. This must be set to None for
+        # HTTP keepalive to be turned off.
+        aio_config.connector_args["keepalive_timeout"] = None
 
         return self.session.create_client(
             name,
